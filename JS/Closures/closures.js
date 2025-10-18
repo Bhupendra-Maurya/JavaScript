@@ -112,3 +112,6 @@ myAccount.withdraw(200);     // Withdrew ₹200.
 myAccount.getBalance();      // Current Balance: ₹1300
 
 console.log(myAccount.balance); // ❌ undefined (cannot access directly)
+
+
+

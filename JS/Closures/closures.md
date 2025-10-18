@@ -131,3 +131,133 @@ counter.decrement(); // 1
 | **Encapsulation** | `balance` or `count` hidden from outside     | Improves security                          |
 | **Practical Use** | Banking apps, counters, modules, React hooks | Prevents data leaks or direct manipulation |
 
+---
+
+## 🧩 Code Recap
+
+```js
+function outer() {
+  let getY;
+  {
+    const y = 6;
+    getY = () => y;
+  }
+  console.log(typeof y); // undefined
+  console.log(getY()); // 6
+}
+
+outer();
+```
+
+---
+
+## 🧠 Step-by-Step Explanation
+
+### 1. Function starts executing
+
+When `outer()` is called, a new **function scope** is created.
+
+Inside it, we declare:
+
+```js
+let getY;
+```
+
+At this point, `getY` is `undefined`.
+
+---
+
+### 2. Enter the block `{ ... }`
+
+Inside this block, we declare:
+
+```js
+const y = 6;
+```
+
+Now, `y` exists **only within this block** because it’s declared with `const` (block-scoped variable).
+
+Then we assign:
+
+```js
+getY = () => y;
+```
+
+✅ Here’s the key part:
+`getY` is assigned a **function** that *closes over* the variable `y`.
+
+That means `getY` now “remembers” the value of `y` (6), even after the block ends.
+
+---
+
+### 3. After the block ends
+
+Once we leave the `{ }` block:
+
+* The variable `y` is no longer **in scope** — it’s not accessible directly.
+* But, it’s **still alive** in memory because the arrow function `getY` has a **closure** referencing it.
+
+---
+
+### 4. `console.log(typeof y)`
+
+This line is **outside** the block where `y` was defined.
+
+So, from this outer scope, `y` is **not defined at all**.
+
+That’s why:
+
+```js
+typeof y  // "undefined"
+```
+
+✅ (Note: `typeof` doesn’t throw an error for undeclared variables — it just returns `"undefined"`.)
+
+---
+
+### 5. `console.log(getY())`
+
+Now, when we call `getY()`:
+
+* The function `getY` still has access to the `y` from the inner block via **closure**.
+* It returns `6`.
+
+So this logs:
+
+```
+6
+```
+
+---
+
+## 🔍 Key Takeaway
+
+| Concept                          | Explanation                                                                              |
+| -------------------------------- | ---------------------------------------------------------------------------------------- |
+| **Block scope (`const`, `let`)** | Variables exist only inside their `{}` block.                                            |
+| **Closure**                      | A function can “remember” variables from its defining scope, even after that scope ends. |
+| **`typeof` behavior**            | Returns `"undefined"` for undeclared variables instead of throwing an error.             |
+
+---
+
+## 💡 Visualization
+
+```
+outer()
+ ├── getY (declared)
+ ├── Block {
+ │     const y = 6
+ │     getY = () => y   ← closure created here
+ │ }
+ ├── typeof y  → undefined (y not in this scope)
+ └── getY() → 6 (closure still remembers y)
+```
+
+---
+
+## 🧠 Analogy
+
+Think of the block `{ ... }` as a **locked room** where `y` was created.
+You can’t see `y` from outside — but you gave `getY` a *key* to that room before locking it.
+So `getY()` can still go inside and retrieve `y` whenever it wants. 🔐
+
